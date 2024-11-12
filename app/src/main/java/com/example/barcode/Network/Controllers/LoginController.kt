@@ -23,7 +23,7 @@ class LoginController {
 
         if (email == null || password == null) {
             Log.e("LoginController", "Email or password missing in data map.")
-            callbackFailure(AppStrings.SOMETHING_WENT_WRONG)
+            callbackFailure(AppStrings.SOMETHING_WENT_WRONG + "1")
             return
         }
 
@@ -82,7 +82,7 @@ class LoginController {
                 callbackFailure(AppStrings.NO_INTERNET)
             }
         }?:run {
-            callbackFailure(AppStrings.SOMETHING_WENT_WRONG)
+            callbackFailure(AppStrings.SOMETHING_WENT_WRONG + "2")
         }
 
     }

@@ -1,4 +1,5 @@
 package com.example.barcode
+
 import androidx.activity.ComponentActivity
 
 open class BaseActivity : ComponentActivity() {
@@ -12,15 +13,13 @@ open class BaseActivity : ComponentActivity() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        currentActivity = this  // Set the current activity when it starts
+    override fun onResume() {
+        super.onResume()
+        currentActivity = this  // Set the current activity when it resumes
     }
 
-    override fun onStop() {
-        super.onStop()
-        currentActivity = null  // Clear the reference when the activity stops
+    override fun onPause() {
+        super.onPause()
+        currentActivity = null  // Clear the reference when the activity is paused
     }
 }
-
-

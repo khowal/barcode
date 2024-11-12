@@ -1,3 +1,5 @@
+import java.io.Serializable
+
 data class LoginModel(
     val success: String,
     val code: String,
@@ -6,7 +8,7 @@ data class LoginModel(
     val apiname: String,
     val error: String,
     val data: Data
-)
+) : Serializable
 
 data class Data(
     val error: String,
@@ -14,4 +16,4 @@ data class Data(
     val name: String,
     val email: String,
     val username: String
-)
+) : Serializable
