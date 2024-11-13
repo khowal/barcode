@@ -1,6 +1,6 @@
 package com.example.barcode.Screens
 
-import LoginModel
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
@@ -14,6 +14,7 @@ class ProfileActivity : BaseActivity() {
     private lateinit var txtEmail: TextView
     private lateinit var txtUserName: TextView
     private lateinit var btnLogOut: Button
+    private lateinit var btnScanBarcode: Button
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,6 +29,7 @@ class ProfileActivity : BaseActivity() {
         txtEmail = findViewById(R.id.txtEmail)
         txtUserName = findViewById(R.id.txtUserName)
         btnLogOut = findViewById(R.id.btnLogOut)
+        btnScanBarcode = findViewById(R.id.btnScanBarcode)
 
         intent.getStringExtra("name")?.let {
             txtName.text = it
@@ -41,6 +43,11 @@ class ProfileActivity : BaseActivity() {
         btnLogOut.setOnClickListener {
             // go to previous screen
             finish()
+        }
+
+        btnScanBarcode.setOnClickListener {
+            val intent = Intent(this, ScannerScreen::class.java)
+            startActivity(intent)
         }
 
     }

@@ -67,10 +67,10 @@ class MainActivity : BaseActivity() {
                 // here if you don't want send whole object and send only name , email etc
                 // you can send them individially
                 // code 1
-                val intent2 = Intent(this, ProfileActivity::class.java)
-                intent2.putExtra("name", loginModel.data.name)
-                intent2.putExtra("email", loginModel.data.email)
-                startActivity(intent2)
+//                val intent2 = Intent(this, ProfileActivity::class.java)
+//                intent2.putExtra("name", loginModel.data.name)
+//                intent2.putExtra("email", loginModel.data.email)
+//                startActivity(intent2)
 
                 // case 2 :
                 // here you want to send whole respose object to another screen user this code
@@ -94,9 +94,9 @@ class MainActivity : BaseActivity() {
                 // Note : along with this code you have uncomment one more code that is inside on create function
                 // please do check as well for this case only
 
-//                localStorage.saveLoginModel(this,loginModel)
-//                val intent3 = Intent(this, ProfileActivity3::class.java)
-//                startActivity(intent3)
+                localStorage.saveLoginModel(this, loginModel)
+                val intent3 = Intent(this, ProfileActivity3::class.java)
+                startActivity(intent3)
 
 
             },
@@ -109,7 +109,6 @@ class MainActivity : BaseActivity() {
 //        resultText.text = emailText.text.toString() +  passwordText.text.toString()
     }
 }
-
 
 
 @Composable

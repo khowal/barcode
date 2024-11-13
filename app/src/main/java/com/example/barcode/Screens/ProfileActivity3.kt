@@ -1,13 +1,12 @@
 package com.example.barcode.Screens
 
 import LocalStorage
-import LoginModel
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
 import com.example.barcode.BaseActivity
 import com.example.barcode.MainActivity
 import com.example.barcode.R
@@ -18,8 +17,14 @@ class ProfileActivity3 : BaseActivity() {
     private lateinit var txtEmail: TextView
     private lateinit var txtUserName: TextView
     private lateinit var btnLogOut: Button
+    private lateinit var btnScanBarcode: Button
     var localStorage = LocalStorage()
 
+
+    @SuppressLint("MissingSuperCall")
+    override fun onBackPressed() {
+
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +39,8 @@ class ProfileActivity3 : BaseActivity() {
         txtEmail = findViewById(R.id.txtEmail)
         txtUserName = findViewById(R.id.txtUserName)
         btnLogOut = findViewById(R.id.btnLogOut)
+        btnScanBarcode = findViewById(R.id.btnScanBarcode)
+
         var loginModel = localStorage.getLoginModel(this)
 
         loginModel?.let {
@@ -50,6 +57,10 @@ class ProfileActivity3 : BaseActivity() {
             startActivity(intent3)
         }
 
+        btnScanBarcode.setOnClickListener {
+            val intent = Intent(this, ScannerScreen::class.java)
+            startActivity(intent)
+        }
 
     }
 

@@ -68,6 +68,15 @@
             android:text="" />
     </LinearLayout>
 
+
+    <Button
+        android:id="@+id/btnScanBarcode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        android:text="@string/scan_qr_code" />
+
     <Button
         android:id="@+id/btnLogOut"
         android:layout_width="wrap_content"

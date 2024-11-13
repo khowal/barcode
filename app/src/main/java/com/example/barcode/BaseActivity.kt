@@ -1,5 +1,6 @@
 package com.example.barcode
 
+import android.annotation.SuppressLint
 import androidx.activity.ComponentActivity
 
 open class BaseActivity : ComponentActivity() {
