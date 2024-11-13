@@ -1,26 +1,23 @@
 package com.example.barcode
 
+import AppStrings
+import KeyboardUtils
 import LocalStorage
 import LoginController
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.barcode.Screens.ProfileActivity
-import com.example.barcode.Screens.ProfileActivity2
 import com.example.barcode.Screens.ProfileActivity3
 import com.example.barcode.ui.theme.BarcodeTheme
-import com.google.gson.Gson
 
 class MainActivity : BaseActivity() {
 
