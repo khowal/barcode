@@ -1,6 +1,9 @@
 package com.example.barcode.Screens
 
+import ApiController
+import Commons.Companion.showToast
 import android.Manifest
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -17,6 +20,7 @@ import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
+import coil.load
 import com.example.barcode.BaseActivity
 import com.example.barcode.R
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
@@ -31,7 +35,6 @@ class ScannerScreen : BaseActivity() {
 
     private lateinit var previewView: PreviewView
     private lateinit var img_close: ImageView
-    private lateinit var overlay: View
 
     var isScanning: Boolean = true;
     private val cameraExecutor = Executors.newSingleThreadExecutor()
@@ -64,12 +67,10 @@ class ScannerScreen : BaseActivity() {
             val alertDialog: AlertDialog = builder.create()
             alertDialog.setCancelable(false)
             alertDialog.show()
-//            finish()
 
 
         }
     }
-
 
     fun setupScanner() {
         if (ContextCompat.checkSelfPermission(
@@ -89,7 +90,6 @@ class ScannerScreen : BaseActivity() {
         setContentView(R.layout.activity_qr_code_scanner)
         previewView = findViewById(R.id.previewView)
         img_close = findViewById(R.id.img_close)
-//        overlay = findViewById(R.id.overlay)
         builder = AlertDialog.Builder(this);
         builder.setTitle(R.string.app_name)
         builder.setIcon(R.mipmap.ic_launcher)
@@ -148,7 +148,33 @@ class ScannerScreen : BaseActivity() {
         }, ContextCompat.getMainExecutor(this))
     }
 
-    @OptIn(ExperimentalGetImage::class)
+    private val someActivityResultLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        when (result.resultCode) {
+            Activity.RESULT_OK -> {
+                isScanning = true
+            }
+
+            Activity.RESULT_CANCELED -> {
+                isScanning = true
+            }
+
+            else -> {
+                isScanning = true
+            }
+        }
+    }
+
+
+    fun moveToDetailScreen(barcodeValue : String){
+        val intent = Intent(this, DataSubmitWithBarcode::class.java)
+        intent.putExtra(AppStrings.INTENT_BARCODE, barcodeValue)
+        someActivityResultLauncher.launch(intent)
+    }
+
+
+
     private fun processImageProxy(
         scanner: com.google.mlkit.vision.barcode.BarcodeScanner,
         imageProxy: ImageProxy
@@ -160,25 +186,36 @@ class ScannerScreen : BaseActivity() {
                 .addOnSuccessListener { barcodes ->
                     for (barcode in barcodes) {
                         barcode.rawValue?.let { barcodeValue ->
+
                             Log.d("BarcodeScanActivity", "Barcode/QR Code Scanned: $barcodeValue")
+
                             if (isScanning) {
                                 isScanning = false
-                                builder.setMessage(barcodeValue)
-                                builder.setIcon(R.mipmap.ic_launcher)
 
-                                builder.setPositiveButton(R.string.retry) { dialogInterface, which ->
-                                    dialogInterface.dismiss()
-                                    isScanning = true
-                                }
 
-                                builder.setNegativeButton(R.string.exit) { dialogInterface, which ->
-                                    dialogInterface.dismiss()
-                                    finish()
-                                }
+                                moveToDetailScreen(barcodeValue)
 
-                                val alertDialog: AlertDialog = builder.create()
-                                alertDialog.setCancelable(false)
-                                alertDialog.show()
+//
+
+//                                isScanning = true
+//                                builder.setMessage(barcodeValue)
+//                                builder.setIcon(R.mipmap.ic_launcher)
+//
+//                                builder.setPositiveButton(R.string.retry) { dialogInterface, which ->
+//                                    dialogInterface.dismiss()
+//                                    isScanning = true
+//                                }
+//
+//                                builder.setNegativeButton(R.string.exit) { dialogInterface, which ->
+//                                    dialogInterface.dismiss()
+//                                    finish()
+//                                }
+//
+//                                val alertDialog: AlertDialog = builder.create()
+//                                alertDialog.setCancelable(false)
+//                                alertDialog.show()
+
+
                             }
                         }
                     }
@@ -187,7 +224,7 @@ class ScannerScreen : BaseActivity() {
                     Log.e("BarcodeScanActivity", "Barcode scanning failed", e)
                 }
                 .addOnCompleteListener {
-                    imageProxy.close() // Important to close the imageProxy
+                    imageProxy.close()
                 }
         } else {
             imageProxy.close()

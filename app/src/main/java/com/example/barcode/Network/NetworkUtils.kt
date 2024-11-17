@@ -12,7 +12,7 @@ class NetworkUtils {
          * @param context The application or activity context.
          * @return true if the device is connected to the internet, false otherwise.
          */
-        fun isInternetAvailable(context: ComponentActivity): Boolean {
+        fun isInternetAvailable(context: Context): Boolean {
             val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
             // For devices running Android 10 (API 29) and above, use NetworkCapabilities

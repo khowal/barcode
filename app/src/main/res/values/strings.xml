@@ -8,8 +8,16 @@
     <string name="setting">Settings</string>
     <string name="exit">exit</string>
     <string name="username">UserName</string>
+    <string name="submit">Submit</string>
     <string name="scan_qr_code">Scan Barcode</string>
+    <string name="barcode_scanner">Barcode Scanner</string>
     <string name="cemara_permission_msg">Camera permission is required to scan barcodes</string>
+    <string name="choose_image">Choose Image</string>
+    <string name="something_went_wrong">Something went wrong, Please try again later.</string>
+    <string name="close">Close\n</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
+    <string name="select_image_source">Select Image Source\n</string>
 
 
 </resources>

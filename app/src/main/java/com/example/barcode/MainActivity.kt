@@ -2,26 +2,25 @@ package com.example.barcode
 
 import AppStrings
 import KeyboardUtils
-import LocalStorage
-import LoginController
+import com.example.barcode.Storage.LocalStorage
+import ApiController
+import Commons.Companion.showToast
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.barcode.Screens.ProfileActivity
 import com.example.barcode.Screens.ProfileActivity3
 import com.example.barcode.ui.theme.BarcodeTheme
 
 class MainActivity : BaseActivity() {
 
-    var loginController: LoginController = LoginController()
+    var apiController: ApiController = ApiController()
     var localStorage = LocalStorage()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,9 +58,9 @@ class MainActivity : BaseActivity() {
         // Call the fetchUser function
         KeyboardUtils.hideKeyboard(this, currentFocus)
 
-        loginController.fetchUser(this, data,
+        apiController.fetchUser(this, data,
             { loginModel ->
-                Toast.makeText(this, "Login Successful!", Toast.LENGTH_SHORT).show()
+                showToast(this, "Login Successful!");
 
                 // case 1 :
                 // here if you don't want send whole object and send only name , email etc

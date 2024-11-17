@@ -1,3 +1,6 @@
+package com.example.barcode.Storage
+
+import LoginModel
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson

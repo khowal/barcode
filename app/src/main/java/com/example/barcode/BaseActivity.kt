@@ -1,6 +1,6 @@
 package com.example.barcode
 
-import android.annotation.SuppressLint
+import android.util.Log
 import androidx.activity.ComponentActivity
 
 open class BaseActivity : ComponentActivity() {
@@ -12,6 +12,12 @@ open class BaseActivity : ComponentActivity() {
         fun getCurrentActivity(): ComponentActivity? {
             return currentActivity
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        currentActivity = this  // Set the current activity when it starts
+        Log.e("BaseActivity", "onStart" + currentActivity?.javaClass?.simpleName)
     }
 
     override fun onResume() {

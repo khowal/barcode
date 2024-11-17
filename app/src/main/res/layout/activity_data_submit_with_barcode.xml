@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".Screens.DataSubmitWithBarcode">
+
+    <LinearLayout
+        android:id="@+id/liDataView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/barcode_scanner"
+            android:textColor="@color/black"
+            android:textSize="24dp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/imgUser"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginTop="16dp"
+            android:scaleType="fitCenter" />
+
+        <TextView
+            android:id="@+id/txtUserName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text=""
+            android:textColor="@color/black"
+            android:textSize="16dp"
+            android:textStyle="normal" />
+
+
+        <Button
+            android:id="@+id/btnImageSelect"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/rounded_button_grey"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="4dp"
+            android:text="@string/choose_image"
+            android:textAllCaps="false"
+            android:textColor="@color/purple_500"
+            android:textSize="16sp" />
+
+
+        <LinearLayout
+            android:id="@+id/li_selectedImag"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Selected Image"
+                android:textColor="@color/black"
+                android:textSize="16dp"
+                android:textStyle="normal" />
+
+
+            <ImageView
+                android:id="@+id/imgSelected"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginTop="16dp"
+                android:scaleType="fitCenter" />
+
+        </LinearLayout>
+
+
+        <Button
+            android:id="@+id/btnSubmit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@color/dark_green"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="12dp"
+            android:text="@string/submit"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
+
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/rlProgressView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

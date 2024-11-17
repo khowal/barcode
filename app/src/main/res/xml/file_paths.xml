@@ -1,0 +1,13 @@
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <cache-path name="camera_images" path="." />
+
+    <!-- Allow access to app's private pictures directory -->
+    <external-path
+        name="external_files"
+        path="Android/data/com.example.barcode/files/Pictures/" />
+
+    <!-- Optionally, you can allow access to other directories, like external storage -->
+    <external-files-path
+        name="external_files"
+        path="Pictures/" />
+</paths>

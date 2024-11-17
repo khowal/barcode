@@ -1,6 +1,7 @@
 package com.example.barcode.Screens
 
-import LocalStorage
+import MyDatabaseHelper
+import com.example.barcode.Storage.LocalStorage
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
@@ -51,13 +52,16 @@ class ProfileActivity3 : BaseActivity() {
 
         btnLogOut.setOnClickListener {
 
-            // here we are clear data from SharedPreferences and redirecting user to the main screen again
+            // here we are clear data from SharedPreferences , local database and redirecting user to the main screen again
+            val dbHelper = MyDatabaseHelper(this)
+            dbHelper.clearTable()
             localStorage.removeFromSharedPreferences(this);
             val intent3 = Intent(this, MainActivity::class.java)
             startActivity(intent3)
         }
 
         btnScanBarcode.setOnClickListener {
+
             val intent = Intent(this, ScannerScreen::class.java)
             startActivity(intent)
         }
