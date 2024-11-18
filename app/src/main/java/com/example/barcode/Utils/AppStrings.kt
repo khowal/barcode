@@ -24,6 +24,9 @@ class AppStrings {
         //
         var INTENT_BARCODE = "intent_barcode"
 
+        //
+        var BROADCAST_UPDATE_UI = "com.barcode.update_count"
+
 
     }
 }

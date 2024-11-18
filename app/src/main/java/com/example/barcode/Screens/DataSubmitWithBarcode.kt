@@ -4,7 +4,10 @@ import ApiController
 import AppStrings
 import Commons
 import Commons.Companion.arePermissionsGranted
+import Commons.Companion.askForNotificationPermission
+import Commons.Companion.initBgProcess
 import Commons.Companion.showToast
+import MyDatabaseHelper
 import android.Manifest
 import android.app.AlertDialog
 import android.content.Intent
@@ -21,6 +24,7 @@ import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import coil.load
@@ -31,7 +35,6 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-
 
 class DataSubmitWithBarcode : BaseActivity() {
 
@@ -57,6 +60,9 @@ class DataSubmitWithBarcode : BaseActivity() {
 
     //
     private var photoFile: File? = null
+
+    //
+    private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
 
     private fun showImageSourceDialog() {
         val options = arrayOf(
@@ -114,6 +120,31 @@ class DataSubmitWithBarcode : BaseActivity() {
         }
     }
 
+    private val pickMediaLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val data = result.data
+                val selectedUri = data?.data // Single selection
+                val clipData = data?.clipData // Multiple selection
+
+                if (selectedUri != null) {
+                    photoFile = saveUriToTempFile(selectedUri)
+                    photoFile?.let {
+                        li_selectedImag.visibility = View.VISIBLE
+                        imgSelected.setImageURI(Uri.fromFile(it))
+                        photoFile = it
+                    } ?: run {
+                        showToast(this, "Error saving image")
+                    }
+
+                } else if (clipData != null) {
+//                    for (i in 0 until clipData.itemCount) {
+//                        handleUri(clipData.getItemAt(i).uri)
+//                    }
+                }
+            }
+        }
+
     private fun saveUriToTempFile(uri: Uri): File? {
         return try {
 
@@ -161,11 +192,16 @@ class DataSubmitWithBarcode : BaseActivity() {
             permissionStorage
         )
 
-        if (arePermissionsGranted(this, REQUIRED_PERMISSIONS)) {
-            openGalleryLauncher.launch("image/*")
-        } else {
-            permissionLauncher.launch(REQUIRED_PERMISSIONS)
+//        if (arePermissionsGranted(this, REQUIRED_PERMISSIONS)) {
+//            openGalleryLauncher.launch("image/*")
+
+        val intent = Intent(MediaStore.ACTION_PICK_IMAGES).apply {
+            type = "image/*"
         }
+        pickMediaLauncher.launch(intent)
+//        } else {
+//            permissionLauncher.launch(REQUIRED_PERMISSIONS)
+//        }
     }
 
 
@@ -180,8 +216,7 @@ class DataSubmitWithBarcode : BaseActivity() {
     }
 
 
-    private val cameraLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    private val cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 photoFile?.let { file ->
                     li_selectedImag.visibility = View.VISIBLE
@@ -193,8 +228,7 @@ class DataSubmitWithBarcode : BaseActivity() {
         }
 
     // Initialize the permission request launcher
-    val permissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+    val permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             // Check the results of the permissions request
             val allPermissionsGranted = permissions.values.all { it == true }
             if (allPermissionsGranted) {
@@ -213,11 +247,68 @@ class DataSubmitWithBarcode : BaseActivity() {
             }
         }
 
+    fun submitImage() {
+        if (photoFile != null) {
+
+
+            val data = mapOf(
+                AppStrings.PARAM_ROLL_NUMBER to barcodeValue,
+                AppStrings.PARAM_PHOTO to photoFile!!,
+                AppStrings.PARAM_NAME to userName,
+            )
+            apiController.uploadBarcodeInfo(this, data, { successResonse ->
+
+                Commons.showDialog(this, successResonse ?: "", {
+                    finish()
+                })
+
+            }, { failureResponse ->
+                Commons.showDialog(this, failureResponse ?: "", {})
+
+            }, {
+
+                Commons.optionDialog(this,
+                    "Intenet is not available, You can turn on internet and retry the process or save data into local file and Application will upload data once intenet will available again!",
+                    getString(R.string.save),
+                    getString(R.string.retry),
+                    getString(R.string.cancel),
+                    {
+
+                        askForNotificationPermission(this, {
+                            registerBgService()
+                        }, {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                            }
+                        })
+                    },
+                    {
+                        submitImage();
+                    })
+
+
+            }, true)
+        } else {
+            showToast(this, "Please Select a file")
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_data_submit_with_barcode)
+
+
+        // Initialize the permission launcher
+        requestPermissionLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                registerBgService()
+            } else {
+                showToast(this, "Notification permission denied")
+            }
+        }
 
         imgUser = findViewById(R.id.imgUser)
         rlProgressView = findViewById(R.id.rlProgressView)
@@ -231,28 +322,7 @@ class DataSubmitWithBarcode : BaseActivity() {
 
 
         btnSubmit.setOnClickListener {
-            if (photoFile != null) {
-
-                showToast(this, "" + photoFile?.path)
-                val data = mapOf(
-                    AppStrings.PARAM_ROLL_NUMBER to barcodeValue,
-                    AppStrings.PARAM_PHOTO to photoFile!!,
-                    AppStrings.PARAM_NAME to userName,
-                )
-                apiController.uploadBarcodeInfo(this, data, { successResonse ->
-
-                    Commons.showDialog(this, successResonse ?: "", {
-                        finish()
-                    })
-
-                }, { failureResponse ->
-                    Commons.showDialog(this, failureResponse ?: "", {})
-
-                })
-            } else {
-                showToast(this, "Please Select a file")
-            }
-
+            submitImage();
         }
 
 
@@ -261,8 +331,6 @@ class DataSubmitWithBarcode : BaseActivity() {
         liDataView.visibility = View.GONE
 
         barcodeValue = intent.getStringExtra(AppStrings.INTENT_BARCODE) ?: "";
-
-
         val data = mapOf(
             AppStrings.PARAM_ROLL_NUMBER to barcodeValue
         )
@@ -273,7 +341,6 @@ class DataSubmitWithBarcode : BaseActivity() {
             rlProgressView.visibility = View.GONE
             liDataView.visibility = View.VISIBLE
 
-            // set data
 
             imgUser.load(barcodeInfoModel.image) {
                 crossfade(true)
@@ -296,7 +363,45 @@ class DataSubmitWithBarcode : BaseActivity() {
             Commons.showDialog(this, errorMessage ?: "", {
                 finish()
             });
+        },{
+
+            //
+            rlProgressView.visibility = View.GONE
+            liDataView.visibility = View.VISIBLE
+
+            //
+            imgUser.load("") {
+                crossfade(true)
+                placeholder(R.drawable.avatar)
+                error(R.drawable.avatar)
+                transformations(CircleCropTransformation())
+            }
+
+            //
+            txtUserName.text = "upload a file for $barcodeValue"
+
+            //
+            btnImageSelect.setOnClickListener {
+                showImageSourceDialog()
+            }
+
+
         })
+
+
+    }
+
+    fun registerBgService() {
+
+        initBgProcess(this)
+
+        val dbHelper = MyDatabaseHelper(this)
+        val notificationId = System.currentTimeMillis().toInt()
+        var isInsertedc = dbHelper.insertData(userName, photoFile?.path ?: "", barcodeValue, 0)
+        if (isInsertedc > 0) {
+            showToast(this, "Data Saved to the future upload.")
+            finish()
+        }
 
 
     }

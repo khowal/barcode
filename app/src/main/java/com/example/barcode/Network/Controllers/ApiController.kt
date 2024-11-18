@@ -1,12 +1,12 @@
 import android.app.Activity
 import android.app.ProgressDialog
-import android.os.Handler
-import android.os.Looper
+import android.content.Context
 import android.util.Log
 import com.google.gson.Gson
-import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -93,7 +93,8 @@ class ApiController {
         context: Activity,
         data: Map<String, String>,
         callbackSuccess: (BarcodeInfoModel) -> Unit,
-        callbackFailure: (String?) -> Unit
+        callbackFailure: (String?) -> Unit,
+        noIntenet: () -> Unit,
     ) {
 
         if (NetworkUtils.isInternetAvailable(context)) {
@@ -142,7 +143,7 @@ class ApiController {
                 }
             })
         } else {
-            callbackFailure(AppStrings.NO_INTERNET)
+            noIntenet()
         }
 
 
@@ -156,18 +157,22 @@ class ApiController {
 
 
     fun uploadBarcodeInfo(
-        context: Activity,
+        context: Context,
         data: Map<String, Any>,
         callbackSuccess: (String) -> Unit,
-        callbackFailure: (String?) -> Unit
+        callbackFailure: (String?) -> Unit,
+        noIntent: () -> Unit,
+        showDialog: Boolean,
     ) {
 
         if (NetworkUtils.isInternetAvailable(context)) {
-
-            val progressDialog = ProgressDialog(context)
-            progressDialog.setMessage(AppStrings.LOADING)
-            progressDialog.setCancelable(false)
-            progressDialog.show()
+            var progressDialog: ProgressDialog? = null
+            if (showDialog == true) {
+                progressDialog = ProgressDialog(context)
+                progressDialog.setMessage(AppStrings.LOADING)
+                progressDialog.setCancelable(false)
+                progressDialog.show()
+            }
 
             //
             var rollNumber: String = data[AppStrings.PARAM_ROLL_NUMBER] as String
@@ -189,7 +194,10 @@ class ApiController {
                 override fun onResponse(
                     call: Call<ResponseBody>, response: Response<ResponseBody>
                 ) {
-                    progressDialog.dismiss()
+                    if (showDialog) {
+                        progressDialog?.dismiss()
+                    }
+
 
                     var code = response.code();
                     var url = call.request().url;
@@ -219,12 +227,14 @@ class ApiController {
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    progressDialog.dismiss()
+                    if (showDialog) {
+                        progressDialog?.dismiss()
+                    }
                     callbackFailure(t.message)
                 }
             })
         } else {
-            callbackFailure(AppStrings.NO_INTERNET)
+            noIntent()
         }
 
 

@@ -80,4 +80,9 @@ dependencies {
 
     // to make image circular and load online image url
     implementation ("io.coil-kt:coil:2.4.0")
+
+    implementation ("androidx.work:work-runtime-ktx:2.8.1")
+
+
+
 }

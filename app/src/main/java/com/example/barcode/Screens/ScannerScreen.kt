@@ -167,7 +167,7 @@ class ScannerScreen : BaseActivity() {
     }
 
 
-    fun moveToDetailScreen(barcodeValue : String){
+    fun moveToDetailScreen(barcodeValue: String) {
         val intent = Intent(this, DataSubmitWithBarcode::class.java)
         intent.putExtra(AppStrings.INTENT_BARCODE, barcodeValue)
         someActivityResultLauncher.launch(intent)
